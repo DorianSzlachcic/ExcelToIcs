@@ -1,8 +1,7 @@
-from datetime import datetime
 import io
-from typing import Tuple
-from tempfile import NamedTemporaryFile
 import shutil
+from datetime import datetime
+from typing import Tuple
 
 import openpyxl
 from ics import Calendar, Event
@@ -32,6 +31,7 @@ def convert(filename: str) -> io.StringIO:
     file.writelines(calendar.serialize_iter())
     file.seek(0)  # Put 'cursor' at the begining of the file
     return file
+
 
 def parse_rows(rows):
     next(rows)  # Skip headers
