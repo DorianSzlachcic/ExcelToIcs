@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Tuple
 from more_itertools import always_iterable
 import openpyxl
 from ics import Calendar, Event
 from utils import allowed_file
+
 
 def convert(filename: str):
     file = openpyxl.open(filename, read_only=True)
@@ -21,9 +22,10 @@ def convert(filename: str):
             pass
         event.make_all_day()  # For now support only all day events
         calendar.events.add(event)
-    
+
     with open('output.ics', 'w') as output_file:
         output_file.writelines(calendar.serialize_iter())
+
 
 def parse_rows(rows):
     next(rows)  # Skip headers
@@ -33,6 +35,7 @@ def parse_rows(rows):
             parsed_row.append(parse_date_range(cell.value)
                               if cell == row[0] and isinstance(cell.value, str) else cell.value)
         yield parsed_row
+
 
 def parse_date_range(value: str) -> Tuple[datetime]:
     start, end = value.split('-')

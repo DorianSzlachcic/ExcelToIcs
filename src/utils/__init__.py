@@ -1,1 +1,3 @@
-from utils.utils import *
+from utils.utils import allowed_file
+
+__all__ = [allowed_file]

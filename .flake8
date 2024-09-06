@@ -3,3 +3,4 @@ exclude=
     .git
     .env
     __pycache__
+max-line-length = 120
