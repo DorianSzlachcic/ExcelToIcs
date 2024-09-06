@@ -1,5 +1,8 @@
 from datetime import datetime
+import io
 from typing import Tuple
+from tempfile import NamedTemporaryFile
+import shutil
 
 import openpyxl
 from ics import Calendar, Event
@@ -8,7 +11,7 @@ from more_itertools import always_iterable
 from utils import allowed_file
 
 
-def convert(filename: str):
+def convert(filename: str) -> io.StringIO:
     file = openpyxl.open(filename, read_only=True)
     # TODO: scan for OK sheet in file
     sheet = file[file.sheetnames[0]]
@@ -25,9 +28,10 @@ def convert(filename: str):
         event.make_all_day()  # For now support only all day events
         calendar.events.add(event)
 
-    with open('output.ics', 'w') as output_file:
-        output_file.writelines(calendar.serialize_iter())
-
+    file = io.StringIO()
+    file.writelines(calendar.serialize_iter())
+    file.seek(0)  # Put 'cursor' at the begining of the file
+    return file
 
 def parse_rows(rows):
     next(rows)  # Skip headers
@@ -53,4 +57,7 @@ def parse_date_range(value: str) -> Tuple[datetime]:
 def main():
     import sys
     assert allowed_file(sys.argv[1]), 'Unsupported file'
-    convert(sys.argv[1])
+    file = convert(sys.argv[1])
+    with open('output.ics', 'w') as output_file:
+        shutil.copyfileobj(file, output_file)
+    file.close()
