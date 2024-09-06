@@ -1,8 +1,10 @@
 from datetime import datetime
 from typing import Tuple
-from more_itertools import always_iterable
+
 import openpyxl
 from ics import Calendar, Event
+from more_itertools import always_iterable
+
 from utils import allowed_file
 
 

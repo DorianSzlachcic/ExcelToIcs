@@ -1,4 +1,5 @@
-from flask import Flask, Response, render_template, request, flash, send_file
+from flask import Flask, Response, flash, render_template, request, send_file
+
 from utils import allowed_file
 
 app = Flask(__name__)
