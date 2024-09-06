@@ -1,0 +1,51 @@
+from datetime import datetime, timedelta
+from typing import Tuple
+from more_itertools import always_iterable
+import openpyxl
+from ics import Calendar, Event
+from utils import allowed_file
+
+def convert(filename: str):
+    file = openpyxl.open(filename, read_only=True)
+    # TODO: scan for OK sheet in file
+    sheet = file[file.sheetnames[0]]
+
+    calendar = Calendar()
+    for date, name, location, description in parse_rows(sheet.iter_rows()):
+        event = Event(name=name, location=location, description=description)
+        date = list(always_iterable(date))
+        event.begin = date[0]
+        try:
+            event.end = date[1]
+        except IndexError:
+            pass
+        event.make_all_day()  # For now support only all day events
+        calendar.events.add(event)
+    
+    with open('output.ics', 'w') as output_file:
+        output_file.writelines(calendar.serialize_iter())
+
+def parse_rows(rows):
+    next(rows)  # Skip headers
+    for row in rows:
+        parsed_row = []
+        for cell in row:
+            parsed_row.append(parse_date_range(cell.value)
+                              if cell == row[0] and isinstance(cell.value, str) else cell.value)
+        yield parsed_row
+
+def parse_date_range(value: str) -> Tuple[datetime]:
+    start, end = value.split('-')
+    end = list(map(int, end.split('.')))
+    if '.' in start:
+        start = list(map(int, start.split('.')))
+        start_date = datetime(end[2], start[1], start[0])
+    else:
+        start_date = datetime(end[2], end[1], int(start))
+    return (start_date, datetime(end[2], end[1], end[0]))
+
+
+def main():
+    import sys
+    assert allowed_file(sys.argv[1]), 'Unsupported file'
+    convert(sys.argv[1])
