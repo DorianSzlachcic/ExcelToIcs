@@ -3,7 +3,8 @@ import shutil
 from datetime import datetime
 from typing import Tuple
 
-import openpyxl
+from openpyxl import open as open_workbook
+from openpyxl.cell.read_only import EmptyCell
 from ics import Calendar, Event
 from more_itertools import always_iterable
 
@@ -11,7 +12,7 @@ from utils import allowed_file
 
 
 def convert(filename: str) -> io.StringIO:
-    file = openpyxl.open(filename, read_only=True)
+    file = open_workbook(filename, read_only=True)
     # TODO: scan for OK sheet in file
     sheet = file[file.sheetnames[0]]
 
@@ -37,9 +38,14 @@ def parse_rows(rows):
     next(rows)  # Skip headers
     for row in rows:
         parsed_row = []
+        if isinstance(row[0], EmptyCell):
+            continue
         for cell in row:
-            parsed_row.append(parse_date_range(cell.value)
-                              if cell == row[0] and isinstance(cell.value, str) else cell.value)
+            if not isinstance(cell, EmptyCell):
+                parsed_row.append(parse_date_range(cell.value)
+                                  if cell == row[0] and isinstance(cell.value, str) else cell.value)
+            else:
+                parsed_row.append(None)
         yield parsed_row
 
 
