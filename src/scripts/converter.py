@@ -38,7 +38,8 @@ def parse_rows(rows):
     next(rows)  # Skip headers
     for row in rows:
         parsed_row = []
-        if isinstance(row[0], EmptyCell):
+        # Skip rows with missing date or name of the event
+        if isinstance(row[0], EmptyCell) or isinstance(row[1], EmptyCell):
             continue
         for cell in row:
             if not isinstance(cell, EmptyCell):
