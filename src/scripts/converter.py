@@ -3,10 +3,10 @@ import shutil
 from datetime import datetime
 from typing import Tuple
 
-from openpyxl import open as open_workbook
-from openpyxl.cell.read_only import EmptyCell
 from ics import Calendar, Event
 from more_itertools import always_iterable
+from openpyxl import open as open_workbook
+from openpyxl.cell.read_only import EmptyCell
 
 from utils import allowed_file
 
