@@ -5,7 +5,10 @@ from flask import Flask, flash, redirect, render_template, request, send_file
 from scripts import converter
 from utils import allowed_file
 
-app = Flask(__name__, template_folder='../../templates')
+app = Flask(__name__,
+            static_url_path='', 
+            template_folder='../../web/templates',
+            static_folder='../../web/static')
 app.secret_key = 'secret'
 
 
