@@ -19,4 +19,4 @@ dev = [
 ]
 
 [project.scripts]
-convert = "scripts.converter:main"
+xls2ics = "scripts.converter:main"

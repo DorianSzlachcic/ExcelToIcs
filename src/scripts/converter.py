@@ -1,3 +1,4 @@
+import argparse
 import io
 import shutil
 from datetime import datetime
@@ -62,9 +63,16 @@ def parse_date_range(value: str) -> Tuple[datetime]:
 
 
 def main():
-    import sys
-    assert allowed_file(sys.argv[1]), 'Unsupported file'
-    file = convert(sys.argv[1])
+    parser = argparse.ArgumentParser(
+        prog="xls2ics",
+        description="This tool allows for converting (for now, only specific) Excel files to ICS files"
+    )
+    parser.add_argument('file', type=str, help="Excel file (.xls, .xlsx)")
+    args = parser.parse_args()
+
+    assert allowed_file(args.file), 'Unsupported file'
+
+    file = convert(args.file)
     with open('output.ics', 'w') as output_file:
         shutil.copyfileobj(file, output_file)
     file.close()
