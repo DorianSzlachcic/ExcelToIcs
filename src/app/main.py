@@ -32,5 +32,6 @@ def convert():
         binary = io.BytesIO()
         binary.write(converted.getvalue().encode())
         binary.seek(0)
+        converted.close()
         return send_file(binary, as_attachment=True, download_name='output.ics')
     return redirect('/')
