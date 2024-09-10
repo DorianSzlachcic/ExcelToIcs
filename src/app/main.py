@@ -29,9 +29,7 @@ def convert():
         return redirect('/')
     if file and allowed_file(file.filename):
         converted = converter.convert(file)
-        binary = io.BytesIO()
-        binary.write(converted.getvalue().encode())
-        binary.seek(0)
+        binary = io.BytesIO(converted.getvalue().encode())
         converted.close()
         return send_file(binary, as_attachment=True, download_name='output.ics')
     return redirect('/')
