@@ -28,7 +28,11 @@ def convert():
         flash('No selected file')
         return redirect('/')
     if file and allowed_file(file.filename):
-        converted = converter.convert(file)
+        try:
+            converted = converter.convert(file)
+        except ValueError:
+            flash("Brak kolumny 'Data' i/lub 'Wydarzenie' w pliku Excel")
+            return redirect('/')
         binary = io.BytesIO(converted.getvalue().encode())
         converted.close()
         return send_file(binary, as_attachment=True, download_name='output.ics')
