@@ -20,14 +20,18 @@ def index():
 @app.route('/convert', methods=['POST'])
 def convert():
     if 'file' not in request.files:
-        flash('No file part')
+        flash('Nie wybrano pliku')
         return redirect('/')
 
     file = request.files.get('file', None)
     if not file or file.filename == '':
-        flash('No selected file')
+        flash('Nie wybrano pliku')
         return redirect('/')
-    if file and allowed_file(file.filename):
+    allowed = allowed_file(file.filename)
+    if not allowed:
+        flash("Nieprawidłowe rozszerzenie pliku. Wybierz plik z rozszerzeniem '.xls' lub '.xlsx'")
+        return redirect('/')
+    if file and allowed:
         try:
             converted = converter.convert(file)
         except ValueError:
